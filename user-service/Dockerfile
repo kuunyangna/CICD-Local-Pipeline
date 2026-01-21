@@ -1,8 +1,19 @@
-FROM nginx:alpine
+# Use official OpenJDK
+FROM eclipse-temurin:17-jdk-jammy
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./html /usr/share/nginx/html
+# Set working directory
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Copy pom.xml and download dependencies first
+COPY pom.xml .
+RUN mkdir -p src && echo "// placeholder" > src/placeholder.txt
+RUN mvn dependency:go-offline -B
 
+# Copy project files
+COPY . .
+
+# Build the jar
+RUN mvn clean package -DskipTests
+
+# Run the jar
+CMD ["java", "-jar", "target/user-service-0.0.1-SNAPSHOT.jar"]
