@@ -1,0 +1,38 @@
+package com.example;
+
+import com.google.gson.Gson;
+import spark.Request;
+import spark.Response;
+import spark.Route;
+import spark.Spark;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class App {
+
+    private static Gson gson = new Gson();
+
+    public static void main(String[] args) {
+        // Listen on port 8080
+        Spark.port(8080);
+
+        // Root endpoint
+        Spark.get("/", (req, res) -> "Welcome to the Java REST API!");
+
+        // Health endpoint
+        Spark.get("/health", (req, res) -> {
+            Map<String, String> status = new HashMap<>();
+            status.put("status", "UP");
+            return gson.toJson(status);
+        });
+
+        // Greeting endpoint
+        Spark.get("/greet/:name", (req, res) -> {
+            String name = req.params("name");
+            Map<String, String> greeting = new HashMap<>();
+            greeting.put("message", "Hello, " + name + "!");
+            return gson.toJson(greeting);
+        });
+    }
+}
