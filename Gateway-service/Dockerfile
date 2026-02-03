@@ -1,14 +1,21 @@
-# Use official Nginx image
-FROM nginx:alpine
+# Use Maven + JDK image
+FROM maven:3.9.2-eclipse-temurin-17 AS build
 
-# Remove default static content
-RUN rm -rf /usr/share/nginx/html/*
+WORKDIR /app
 
-# Copy our HTML into Nginx
-COPY html/ /usr/share/nginx/html/
+# Copy pom.xml and download dependencies
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
 
-# Expose port 80
-EXPOSE 80
+# Copy source code and build
+COPY src ./src
+RUN mvn package -B
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Use lightweight Java runtime to run the jar
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+
+COPY --from=build /app/target/myapp.jar ./myapp.jar
+
+EXPOSE 8080
+CMD ["java", "-jar", "myapp.jar"]
