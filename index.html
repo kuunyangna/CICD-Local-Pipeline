@@ -1,38 +1,24 @@
-package com.example;
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Minimal Java Web App</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; padding: 20px; }
+        h1 { color: #333; }
+        button { padding: 10px 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Hello from the Minimal Java Web App!</h1>
+    <p>This is a fully static web page served by embedded Jetty in Java.</p>
 
-import com.google.gson.Gson;
-import spark.Request;
-import spark.Response;
-import spark.Route;
-import spark.Spark;
+    <button onclick="showMessage()">Click Me</button>
+    <p id="msg"></p>
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class App {
-
-    private static Gson gson = new Gson();
-
-    public static void main(String[] args) {
-        // Listen on port 8080
-        Spark.port(8080);
-
-        // Root endpoint
-        Spark.get("/", (req, res) -> "Welcome to the Java REST API!");
-
-        // Health endpoint
-        Spark.get("/health", (req, res) -> {
-            Map<String, String> status = new HashMap<>();
-            status.put("status", "UP");
-            return gson.toJson(status);
-        });
-
-        // Greeting endpoint
-        Spark.get("/greet/:name", (req, res) -> {
-            String name = req.params("name");
-            Map<String, String> greeting = new HashMap<>();
-            greeting.put("message", "Hello, " + name + "!");
-            return gson.toJson(greeting);
-        });
-    }
-}
+    <script>
+        function showMessage() {
+            document.getElementById('msg').innerText = "You clicked the button!";
+        }
+    </script>
+</body>
+</html>
